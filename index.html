@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周期质检辅助工具</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        light: '#f8fafc',
+                        dark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .btn-primary {
+                @apply bg-primary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-slate-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-success {
+                @apply bg-success text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-green-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-danger {
+                @apply bg-danger text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-red-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .card {
+                @apply bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover;
+            }
+            .input-file {
+                @apply block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-blue-600;
+            }
+            .input-text {
+                @apply block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+            }
+            .label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
+            }
+            .link {
+                @apply text-primary hover:text-blue-700 hover:underline cursor-pointer transition-colors duration-300;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">周期质检辅助工具</h1>
+            <p class="text-gray-600 text-lg">提高工作效率，简化质检流程</p>
+        </header>
+
+        <main class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 周期评测情况检查 -->
+                <div class="card">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-primary mb-4">
+                            <i class="fa fa-bar-chart text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">周期评测情况检查</h2>
+                    </div>
+                    <p class="text-gray-600 text-center mb-6">处理评测项目计数统计，筛选总计数据</p>
+                    <div class="text-center">
+                        <button id="btn-check-evaluation" class="btn-primary w-full">
+                            <i class="fa fa-check-circle mr-2"></i>开始检查
+                        </button>
+                    </div>
+                </div>
+
+                <!-- badcase检查 -->
+                <div class="card">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-danger mb-4">
+                            <i class="fa fa-exclamation-triangle text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">badcase检查</h2>
+                    </div>
+                    <p class="text-gray-600 text-center mb-6">筛选未完成任务，生成链接并处理badcase</p>
+                    <div class="text-center">
+                        <button id="btn-check-badcase" class="btn-danger w-full">
+                            <i class="fa fa-search mr-2"></i>开始检查
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 周期评测质检 -->
+                <div class="card">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-success mb-4">
+                            <i class="fa fa-random text-2xl"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800">周期评测质检</h2>
+                    </div>
+                    <p class="text-gray-600 text-center mb-6">随机抽取一定比例任务进行最终质检</p>
+                    <div class="text-center">
+                        <button id="btn-quality-inspection" class="btn-success w-full">
+                            <i class="fa fa-random mr-2"></i>开始质检
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 页面跳转逻辑
+        document.getElementById('btn-check-evaluation').addEventListener('click', function() {
+            window.location.href = 'check-evaluation.html';
+        });
+
+        document.getElementById('btn-check-badcase').addEventListener('click', function() {
+            window.location.href = 'check-badcase.html';
+        });
+
+        document.getElementById('btn-quality-inspection').addEventListener('click', function() {
+            window.location.href = 'quality-inspection.html';
+        });
+    </script>
+</body>
+</html>

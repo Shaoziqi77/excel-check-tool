@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周期评测情况检查 - 周期质检辅助工具</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        light: '#f8fafc',
+                        dark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .btn-primary {
+                @apply bg-primary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-slate-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-success {
+                @apply bg-success text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-green-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .btn-danger {
+                @apply bg-danger text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-red-600 hover:shadow-lg transform hover:-translate-y-1;
+            }
+            .card {
+                @apply bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover;
+            }
+            .input-file {
+                @apply block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-blue-600;
+            }
+            .input-text {
+                @apply block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+            }
+            .label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
+            }
+            .link {
+                @apply text-primary hover:text-blue-700 hover:underline cursor-pointer transition-colors duration-300;
+            }
+            .table-container {
+                @apply overflow-x-auto max-h-96 overflow-y-auto border border-gray-200 rounded-lg;
+            }
+            .table {
+                @apply min-w-full divide-y divide-gray-200;
+            }
+            .table th {
+                @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0;
+            }
+            .table td {
+                @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+            }
+            .table tr:nth-child(even) {
+                @apply bg-gray-50;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">周期评测情况检查</h1>
+                    <p class="text-gray-600">筛选评测项目计数统计中的总计数据</p>
+                </div>
+                <button id="btn-back" class="btn-secondary">
+                    <i class="fa fa-arrow-left mr-2"></i>返回首页
+                </button>
+            </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto">
+            <div class="card mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">操作指南</h2>
+                <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                    <li>从AI飞象平台-评测管理-作业整页批改评测/答题卡评测，下载指定时段的"评测项目计数统计"</li>
+                    <li>
+                        <a href="https://mapi.yuanfudao.com/evaluation/#/" target="_blank" class="link">
+                            <i class="fa fa-external-link mr-1"></i>前往AI飞象平台
+                        </a>
+                    </li>
+                    <li>上传下载的Excel文件</li>
+                    <li>点击"文件处理"按钮，系统将筛选出"题型"列为"总计"的数据</li>
+                    <li>预览处理结果并下载</li>
+                    <li>将文件更新至兼职文档中的"x月检查"，在周期任务中通过vlookup函数匹配子任务状态</li>
+                    <li>"1"为任务未完成，需要在群内提醒对应同学；"2"为任务已完成</li>
+                </ol>
+            </div>
+
+            <div class="card mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">文件上传</h2>
+                <div class="mb-4">
+                    <label for="file-upload" class="label">选择“评测项目计数统计”文件</label>
+                    <input type="file" id="file-upload" accept=".xlsx, .xls" class="input-file">
+                </div>
+                <div class="flex space-x-4">
+                    <button id="btn-process-file" class="btn-primary" disabled>
+                        <i class="fa fa-cogs mr-2"></i>文件处理
+                    </button>
+                    <button id="btn-download-file" class="btn-success" disabled>
+                        <i class="fa fa-download mr-2"></i>文件下载
+                    </button>
+                </div>
+            </div>
+
+            <div id="preview-section" class="card hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">文件预览</h2>
+                <div class="table-container">
+                    <table id="preview-table" class="table">
+                        <!-- 表格内容将通过JavaScript动态生成 -->
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">提醒文案</h2>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <input type="text" id="copy-text-1" value="请检查是否有漏评，并确认是否已提交" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                        <button id="copy-btn-1" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                            <i class="fa fa-copy mr-1"></i>复制
+                        </button>
+                        <p class="text-sm text-gray-500 mt-1">标记已完成但子任务状态为1时使用</p>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="copy-text-2" value="请同学注意截止时间为今天14:00，尽快完成评测任务" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                        <button id="copy-btn-2" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                            <i class="fa fa-copy mr-1"></i>复制
+                        </button>
+                        <p class="text-sm text-gray-500 mt-1">未标记完成且子任务状态为1时使用</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 返回首页
+        document.getElementById('btn-back').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+
+        // 文件上传处理
+        let uploadedFile = null;
+        let processedData = null;
+
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                uploadedFile = e.target.files[0];
+                document.getElementById('btn-process-file').disabled = false;
+                document.getElementById('btn-download-file').disabled = true;
+                document.getElementById('preview-section').classList.add('hidden');
+            }
+        });
+
+        // 文件处理
+        document.getElementById('btn-process-file').addEventListener('click', function() {
+            if (!uploadedFile) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // 将Excel数据转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // 筛选"题型"列为"总计"的数据
+                    processedData = jsonData.filter(row => row['题型'] === '总计');
+                    
+                    // 显示预览
+                    displayPreview(processedData);
+                    
+                    // 启用下载按钮
+                    document.getElementById('btn-download-file').disabled = false;
+                    
+                    // 显示预览区域
+                    document.getElementById('preview-section').classList.remove('hidden');
+                    
+                    // 显示成功提示
+                    alert('文件处理成功，共筛选出 ' + processedData.length + ' 条记录');
+                } catch (error) {
+                    console.error('文件处理错误:', error);
+                    alert('文件处理失败，请检查文件格式是否正确');
+                }
+            };
+            reader.readAsArrayBuffer(uploadedFile);
+        });
+
+        // 显示预览
+        function displayPreview(data) {
+            if (!data || data.length === 0) return;
+
+            const table = document.getElementById('preview-table');
+            table.innerHTML = '';
+
+            // 创建表头
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            // 获取所有列名
+            const columns = Object.keys(data[0]);
+            
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 创建表体
+            const tbody = document.createElement('tbody');
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = row[column] || '';
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+            
+            table.appendChild(tbody);
+        }
+
+        // 文件下载
+        document.getElementById('btn-download-file').addEventListener('click', function() {
+            if (!processedData || processedData.length === 0) return;
+
+            try {
+                // 创建工作簿
+                const workbook = XLSX.utils.book_new();
+                
+                // 创建工作表
+                const worksheet = XLSX.utils.json_to_sheet(processedData);
+                
+                // 将工作表添加到工作簿
+                XLSX.utils.book_append_sheet(workbook, worksheet, '筛选结果');
+                
+                // 生成Excel文件并下载
+                const fileName = '处理后的评测项目计数统计.xlsx';
+                XLSX.writeFile(workbook, fileName);
+            } catch (error) {
+                console.error('文件下载错误:', error);
+                alert('文件下载失败');
+            }
+        });
+        
+        // 复制功能
+        document.getElementById('copy-btn-1').addEventListener('click', function() {
+            const text = document.getElementById('copy-text-1').value;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('复制成功！');
+            }, function() {
+                alert('复制失败，请手动复制');
+            });
+        });
+        
+        document.getElementById('copy-btn-2').addEventListener('click', function() {
+            const text = document.getElementById('copy-text-2').value;
+            navigator.clipboard.writeText(text).then(function() {
+                alert('复制成功！');
+            }, function() {
+                alert('复制失败，请手动复制');
+            });
+        });
+    </script>
+</body>
+</html>
