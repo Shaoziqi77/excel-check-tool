@@ -350,7 +350,8 @@
                     const cellAddress = XLSX.utils.encode_cell({r: i-1, c: accuracyCol-1});
                     worksheet[cellAddress] = {
                         t: 'n',
-                        f: `1-${XLSX.utils.encode_cell({r: i-1, c: errorCountCol-1})}/${XLSX.utils.encode_cell({r: i-1, c: totalTagsCol-1})}`
+                        f: `1-${XLSX.utils.encode_cell({r: i-1, c: errorCountCol-1})}/${XLSX.utils.encode_cell({r: i-1, c: totalTagsCol-1})}`,
+                        z: '0.00%' // 设置为保留两位小数的百分比格式
                     };
                 }
                 
