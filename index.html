@@ -4,124 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>周期质检辅助工具</title>
-    <!-- Tailwind CSS v3 -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#64748b',
-                        success: '#22c55e',
-                        warning: '#f59e0b',
-                        danger: '#ef4444',
-                        light: '#f8fafc',
-                        dark: '#1e293b'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif']
-                    },
-                    boxShadow: {
-                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                    }
-                }
-            }
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
+
+        .header { background: #1a56db; color: white; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header span { font-size: 13px; opacity: 0.8; }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 24px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 32px; text-align: center; transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .btn-primary {
-                @apply bg-primary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-blue-600 hover:shadow-lg transform hover:-translate-y-1;
-            }
-            .btn-secondary {
-                @apply bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-slate-600 hover:shadow-lg transform hover:-translate-y-1;
-            }
-            .btn-success {
-                @apply bg-success text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-green-600 hover:shadow-lg transform hover:-translate-y-1;
-            }
-            .btn-danger {
-                @apply bg-danger text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-red-600 hover:shadow-lg transform hover:-translate-y-1;
-            }
-            .card {
-                @apply bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover;
-            }
-            .input-file {
-                @apply block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-blue-600;
-            }
-            .input-text {
-                @apply block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
-            }
-            .label {
-                @apply block text-sm font-medium text-gray-700 mb-1;
-            }
-            .link {
-                @apply text-primary hover:text-blue-700 hover:underline cursor-pointer transition-colors duration-300;
-            }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
+
+        .card-icon {
+            width: 64px; height: 64px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+        }
+        .card-icon.blue { background: #eff6ff; color: #1a56db; }
+        .card-icon.red { background: #fee2e2; color: #dc2626; }
+        .card-icon.green { background: #f0fdf4; color: #16a34a; }
+
+        .card h2 { font-size: 18px; font-weight: 600; color: #1e40af; margin-bottom: 8px; }
+        .card h2.red { color: #dc2626; }
+        .card h2.green { color: #16a34a; }
+        .card p { color: #6b7280; font-size: 13px; line-height: 1.5; margin-bottom: 24px; }
+
+        .btn {
+            padding: 9px 20px; border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 500; cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary { background: #1a56db; color: white; }
+        .btn-primary:hover { background: #1e429f; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-success:hover { background: #15803d; }
+
+        .btn.full-width { width: 100%; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-12">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">周期质检辅助工具</h1>
-            <p class="text-gray-600 text-lg">提高工作效率，简化质检流程</p>
-        </header>
+<body>
+    <div class="header">
+        <div>
+            <h1>周期质检辅助工具</h1>
+            <span>提高工作效率，简化质检流程</span>
+        </div>
+    </div>
 
-        <main class="max-w-4xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- 周期评测情况检查 -->
-                <div class="card">
-                    <div class="text-center mb-6">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-primary mb-4">
-                            <i class="fa fa-bar-chart text-2xl"></i>
-                        </div>
-                        <h2 class="text-xl font-semibold text-gray-800">周期评测检查</h2>
-                    </div>
-                    <p class="text-gray-600 text-center mb-6">通过子任务状态检查未完成/异常的周期评测任务</p>
-                    <div class="text-center">
-                        <button id="btn-check-evaluation" class="btn-primary w-full">
-                            <i class="fa fa-check-circle mr-2"></i>开始检查
-                        </button>
-                    </div>
+    <div class="container">
+        <div class="card-grid">
+            <!-- 周期评测检查 -->
+            <div class="card">
+                <div class="card-icon blue">
+                    <i class="fa fa-bar-chart"></i>
                 </div>
-
-                <!-- badcase检查 -->
-                <div class="card">
-                    <div class="text-center mb-6">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-danger mb-4">
-                            <i class="fa fa-exclamation-triangle text-2xl"></i>
-                        </div>
-                        <h2 class="text-xl font-semibold text-gray-800">badcase筛选</h2>
-                    </div>
-                    <p class="text-gray-600 text-center mb-6">根据制定规则筛选得到周期评测中的badcase</p>
-                    <div class="text-center">
-                        <button id="btn-check-badcase" class="btn-danger w-full">
-                            <i class="fa fa-search mr-2"></i>开始检查
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 周期评测质检 -->
-                <div class="card">
-                    <div class="text-center mb-6">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-success mb-4">
-                            <i class="fa fa-random text-2xl"></i>
-                        </div>
-                        <h2 class="text-xl font-semibold text-gray-800">周期评测质检</h2>
-                    </div>
-                    <p class="text-gray-600 text-center mb-6">随机抽取一定比例任务进行最终质检</p>
-                    <div class="text-center">
-                        <button id="btn-quality-inspection" class="btn-success w-full">
-                            <i class="fa fa-random mr-2"></i>开始质检
-                        </button>
-                    </div>
-                </div>
+                <h2>周期评测检查</h2>
+                <p>通过子任务状态检查未完成/异常的周期评测任务</p>
+                <button id="btn-check-evaluation" class="btn btn-primary full-width">
+                    <i class="fa fa-check-circle"></i>开始检查
+                </button>
             </div>
-        </main>
+
+            <!-- badcase筛选 -->
+            <div class="card">
+                <div class="card-icon red">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </div>
+                <h2 class="red">badcase筛选</h2>
+                <p>根据制定规则筛选得到周期评测中的badcase</p>
+                <button id="btn-check-badcase" class="btn btn-danger full-width">
+                    <i class="fa fa-search"></i>开始检查
+                </button>
+            </div>
+
+            <!-- 周期评测质检 -->
+            <div class="card">
+                <div class="card-icon green">
+                    <i class="fa fa-random"></i>
+                </div>
+                <h2 class="green">周期评测质检</h2>
+                <p>从周期任务中按比例随机抽取并进行最终质检</p>
+                <button id="btn-quality-inspection" class="btn btn-success full-width">
+                    <i class="fa fa-random"></i>开始质检
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
