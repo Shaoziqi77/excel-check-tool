@@ -86,8 +86,8 @@
         <header class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">周期评测情况检查</h1>
-                    <p class="text-gray-600">筛选评测项目计数统计中的总计数据</p>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">周期评测检查</h1>
+                    <p class="text-gray-600">检查未完成/异常的周期任务</p>
                 </div>
                 <button id="btn-back" class="btn-secondary">
                     <i class="fa fa-arrow-left mr-2"></i>返回首页
@@ -99,17 +99,12 @@
             <div class="card mb-8">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">操作指南</h2>
                 <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>从AI飞象平台-评测管理-作业整页批改评测/答题卡评测，下载指定时段的"评测项目计数统计"</li>
-                    <li>
-                        <a href="https://mapi.yuanfudao.com/evaluation/#/" target="_blank" class="link">
-                            <i class="fa fa-external-link mr-1"></i>前往AI飞象平台
-                        </a>
-                    </li>
+                    <li>从<a href="https://mapi.yuanfudao.com/evaluation/#/" target="_blank" class="link">AI飞象平台</a>-评测管理-作业整页批改评测/答题卡评测，下载指定时段的<strong>"评测项目计数统计"</strong></li>
                     <li>上传下载的评测项目计数统计文件</li>
                     <li>点击"文件处理"，筛选出"题型"列为"总计"的数据</li>
                     <li>预览处理结果并下载</li>
-                    <li>将文件更新至兼职文档中的"x月检查"，在周期任务中通过vlookup函数匹配子任务状态</li>
-                    <li>"1"为任务未完成，需要在群内提醒对应同学；"2"为任务已完成</li>
+                    <li>将文件更新至兼职文档中的<strong>"x月检查"</strong>，在周期任务中通过vlookup函数匹配子任务状态</li>
+                    <li><strong>"1"为任务未完成，需要在群内提醒对应同学</strong>；"2"为任务已完成</li>
                 </ol>
             </div>
 
@@ -143,14 +138,14 @@
                 <div class="space-y-4">
                     <div class="relative">
                         <input type="text" id="copy-text-1" value="请检查是否有漏评，并确认是否已提交" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                        <button id="copy-btn-1" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                        <button id="copy-btn-1" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors duration-300">
                             <i class="fa fa-copy mr-1"></i>复制
                         </button>
                         <p class="text-sm text-gray-500 mt-1">子任务状态为1但标记已完成时使用</p>
                     </div>
                     <div class="relative">
                         <input type="text" id="copy-text-2" value="请同学注意截止时间为今天14:00，尽快完成评测任务" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                        <button id="copy-btn-2" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                        <button id="copy-btn-2" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors duration-300">
                             <i class="fa fa-copy mr-1"></i>复制
                         </button>
                         <p class="text-sm text-gray-500 mt-1">子任务状态为1且未标记完成时使用</p>
@@ -170,12 +165,24 @@
         let uploadedFile = null;
         let processedData = null;
 
+        // 显示上传成功提示
+        function showUploadSuccess() {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            toast.textContent = '文件上传成功！';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         document.getElementById('file-upload').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 uploadedFile = e.target.files[0];
                 document.getElementById('btn-process-file').disabled = false;
                 document.getElementById('btn-download-file').disabled = true;
                 document.getElementById('preview-section').classList.add('hidden');
+                showUploadSuccess();
             }
         });
 

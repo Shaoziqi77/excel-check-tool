@@ -95,8 +95,8 @@
         <header class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">badcase检查</h1>
-                    <p class="text-gray-600">筛选未完成任务，生成链接并处理badcase</p>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">badcase筛选</h1>
+                    <p class="text-gray-600">筛选周期评测中的badcase</p>
                 </div>
                 <button id="btn-back" class="btn-secondary">
                     <i class="fa fa-arrow-left mr-2"></i>返回首页
@@ -215,6 +215,17 @@
         let detailFileData = null;
         let badcaseData = null;
 
+        // 显示上传成功提示
+        function showUploadSuccess() {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            toast.textContent = '文件上传成功！';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         // 更新步骤状态
         function updateStep(step) {
             // 重置所有步骤
@@ -257,6 +268,7 @@
         document.getElementById('cycle-file-upload').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 document.getElementById('btn-process-cycle-file').disabled = false;
+                showUploadSuccess();
             }
         });
 
@@ -316,6 +328,7 @@
         document.getElementById('detail-file-upload').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 document.getElementById('btn-filter-badcase').disabled = false;
+                showUploadSuccess();
             }
         });
 

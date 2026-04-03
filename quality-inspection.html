@@ -177,12 +177,24 @@
         let inspectionData = null;
         let selectedData = null;
 
+        // 显示上传成功提示
+        function showUploadSuccess() {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            toast.textContent = '文件上传成功！';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         document.getElementById('inspection-file-upload').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 uploadedFile = e.target.files[0];
                 document.getElementById('btn-generate-inspection').disabled = false;
                 document.getElementById('btn-download-inspection').disabled = true;
                 document.getElementById('inspection-result').classList.add('hidden');
+                showUploadSuccess();
             }
         });
 
