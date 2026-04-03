@@ -136,20 +136,20 @@
             <div class="card mb-8">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">提醒文案</h2>
                 <div class="space-y-4">
-                    <div class="relative">
-                        <input type="text" id="copy-text-1" value="请检查是否有漏评，并确认是否已提交" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                        <button id="copy-btn-1" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors duration-300">
-                            <i class="fa fa-copy mr-1"></i>复制
+                    <div class="flex">
+                        <input type="text" id="copy-text-1" value="请检查是否有漏评，并确认是否已提交" class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg bg-gray-50" readonly>
+                        <button id="copy-btn-1" class="bg-gray-700 text-white px-4 py-3 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">
+                            <i class="fa fa-copy"></i>
                         </button>
-                        <p class="text-sm text-gray-500 mt-1">子任务状态为1但标记已完成时使用</p>
                     </div>
-                    <div class="relative">
-                        <input type="text" id="copy-text-2" value="请同学注意截止时间为今天14:00，尽快完成评测任务" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                        <button id="copy-btn-2" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors duration-300">
-                            <i class="fa fa-copy mr-1"></i>复制
+                    <p class="text-sm text-gray-500 mb-2">子任务状态为1但标记已完成时使用</p>
+                    <div class="flex">
+                        <input type="text" id="copy-text-2" value="请同学注意截止时间为今天14:00，尽快完成评测任务" class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg bg-gray-50" readonly>
+                        <button id="copy-btn-2" class="bg-gray-700 text-white px-4 py-3 rounded-r-lg hover:bg-gray-800 transition-colors duration-300">
+                            <i class="fa fa-copy"></i>
                         </button>
-                        <p class="text-sm text-gray-500 mt-1">子任务状态为1且未标记完成时使用</p>
                     </div>
+                    <p class="text-sm text-gray-500">子任务状态为1且未标记完成时使用</p>
                 </div>
             </div>
         </main>
