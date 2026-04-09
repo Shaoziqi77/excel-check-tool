@@ -403,7 +403,7 @@
                         if (hasTaskId) {
                             const uniqueTaskIds = [...new Set(taskIds)];
                             const taskIdParam = uniqueTaskIds.join(',');
-                            const link = `https://mapi.yuanfudao.com/evaluation/#/evaluation/holepage/statistics?taskIds=${taskIdParam}`;
+                            const link = `https://mapi.yuanfudao.com/evaluation/#/evaluation/holepage/statistics?taskIds=[${taskIdParam}]`;
 
                             const linkElement = document.createElement('div');
                             linkElement.style.display = 'flex';
