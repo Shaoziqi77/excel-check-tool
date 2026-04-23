@@ -246,10 +246,12 @@
 
         <div class="card">
             <h2>文件上传</h2>
-            <div class="upload-box">
+            <div class="upload-box" id="upload-box">
                 <div class="icon" style="font-size: 36px; margin-bottom: 8px;">📋</div>
                 <h4 style="font-size: 15px; color: #1a56db; margin-bottom: 4px;">上传周期任务数据文件</h4>
                 <p style="color: #6b7280; font-size: 12px;">支持 .xlsx, .xls 格式</p>
+                <p style="color: #9ca3af; font-size: 11px; margin-top: 8px;">或者拖拽文件到此处</p>
+                <p id="file-name-display" style="color: #16a34a; font-size: 13px; font-weight: 500; margin-top: 8px; display: none;"></p>
                 <input type="file" id="file-upload" accept=".xlsx, .xls" onchange="handleFile(this)">
                 <button class="btn-upload" onclick="document.getElementById('file-upload').click()">选择文件</button>
             </div>
@@ -283,6 +285,59 @@
         let uploadedFile = null;
         let inspectionData = null;
 
+        // 拖拽上传功能
+        const uploadBox = document.getElementById('upload-box');
+        
+        // 阻止默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // 高亮效果
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadBox.style.borderColor = '#1a56db';
+            uploadBox.style.background = '#eff6ff';
+        }
+        
+        function unhighlight() {
+            uploadBox.style.borderColor = '#93c5fd';
+            uploadBox.style.background = 'white';
+        }
+        
+        // 处理文件放下
+        uploadBox.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                    file.type === 'application/vnd.ms-excel') {
+                    // 更新文件输入
+                    document.getElementById('file-upload').files = files;
+                    // 调用处理函数
+                    handleFile(document.getElementById('file-upload'));
+                } else {
+                    alert('请上传Excel文件');
+                }
+            }
+        }
+
         // 显示上传成功提示
         function showUploadSuccess() {
             const toast = document.createElement('div');
@@ -307,6 +362,12 @@
                 document.getElementById('btn-start-inspection').disabled = false;
                 document.getElementById('btn-download-result').disabled = true;
                 document.getElementById('result-section').style.display = 'none';
+                
+                // 显示文件名
+                const fileNameDisplay = document.getElementById('file-name-display');
+                fileNameDisplay.textContent = uploadedFile.name + ' 已上传成功';
+                fileNameDisplay.style.display = 'block';
+                
                 showUploadSuccess();
             }
         }

@@ -247,10 +247,12 @@
                 <div class="step-title">上传周期任务数据</div>
             </div>
             <div class="card">
-                <div class="upload-box">
+                <div class="upload-box" id="cycle-upload-box">
                     <div class="icon" style="font-size: 36px; margin-bottom: 8px;">📋</div>
                     <h4 style="font-size: 15px; color: #1a56db; margin-bottom: 4px;">上传周期任务数据文件</h4>
                     <p style="color: #6b7280; font-size: 12px;">支持 .xlsx, .xls 格式</p>
+                    <p style="color: #9ca3af; font-size: 11px; margin-top: 8px;">或者拖拽文件到此处</p>
+                    <p id="cycle-file-name-display" style="color: #16a34a; font-size: 13px; font-weight: 500; margin-top: 8px; display: none;"></p>
                     <input type="file" id="cycle-file-upload" accept=".xlsx, .xls" onchange="handleCycleFile(this)">
                     <button class="btn-upload" onclick="document.getElementById('cycle-file-upload').click()">选择文件</button>
                 </div>
@@ -286,10 +288,12 @@
                 <div class="step-title">上传评测详情数据</div>
             </div>
             <div class="card">
-                <div class="upload-box">
+                <div class="upload-box" id="detail-upload-box">
                     <div class="icon" style="font-size: 36px; margin-bottom: 8px;">📊</div>
                     <h4 style="font-size: 15px; color: #1a56db; margin-bottom: 4px;">上传"评测详细统计.xlsx"</h4>
                     <p style="color: #6b7280; font-size: 12px;">支持 .xlsx, .xls 格式</p>
+                    <p style="color: #9ca3af; font-size: 11px; margin-top: 8px;">或者拖拽文件到此处</p>
+                    <p id="detail-file-name-display" style="color: #16a34a; font-size: 13px; font-weight: 500; margin-top: 8px; display: none;"></p>
                     <input type="file" id="detail-file-upload" accept=".xlsx, .xls" onchange="handleDetailFile(this)">
                     <button class="btn-upload" onclick="document.getElementById('detail-file-upload').click()">选择文件</button>
                 </div>
@@ -337,6 +341,107 @@
         let cycleFile = null;
         let detailFile = null;
 
+        // 拖拽上传功能 - 周期任务数据
+        const cycleUploadBox = document.getElementById('cycle-upload-box');
+        
+        // 阻止默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            cycleUploadBox.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // 高亮效果
+        ['dragenter', 'dragover'].forEach(eventName => {
+            cycleUploadBox.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            cycleUploadBox.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            cycleUploadBox.style.borderColor = '#1a56db';
+            cycleUploadBox.style.background = '#eff6ff';
+        }
+        
+        function unhighlight() {
+            cycleUploadBox.style.borderColor = '#93c5fd';
+            cycleUploadBox.style.background = 'white';
+        }
+        
+        // 处理文件放下
+        cycleUploadBox.addEventListener('drop', handleCycleDrop, false);
+        
+        function handleCycleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                    file.type === 'application/vnd.ms-excel') {
+                    // 更新文件输入
+                    document.getElementById('cycle-file-upload').files = files;
+                    // 调用处理函数
+                    handleCycleFile(document.getElementById('cycle-file-upload'));
+                } else {
+                    alert('请上传Excel文件');
+                }
+            }
+        }
+
+        // 拖拽上传功能 - 评测详情数据
+        const detailUploadBox = document.getElementById('detail-upload-box');
+        
+        // 阻止默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            detailUploadBox.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        // 高亮效果
+        ['dragenter', 'dragover'].forEach(eventName => {
+            detailUploadBox.addEventListener(eventName, highlightDetail, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            detailUploadBox.addEventListener(eventName, unhighlightDetail, false);
+        });
+        
+        function highlightDetail() {
+            detailUploadBox.style.borderColor = '#1a56db';
+            detailUploadBox.style.background = '#eff6ff';
+        }
+        
+        function unhighlightDetail() {
+            detailUploadBox.style.borderColor = '#93c5fd';
+            detailUploadBox.style.background = 'white';
+        }
+        
+        // 处理文件放下
+        detailUploadBox.addEventListener('drop', handleDetailDrop, false);
+        
+        function handleDetailDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                    file.type === 'application/vnd.ms-excel') {
+                    // 更新文件输入
+                    document.getElementById('detail-file-upload').files = files;
+                    // 调用处理函数
+                    handleDetailFile(document.getElementById('detail-file-upload'));
+                } else {
+                    alert('请上传Excel文件');
+                }
+            }
+        }
+
         // 显示上传成功提示
         function showUploadSuccess() {
             const toast = document.createElement('div');
@@ -360,6 +465,12 @@
             if (input.files[0]) {
                 cycleFile = input.files[0];
                 document.getElementById('btn-process-cycle-file').disabled = false;
+                
+                // 显示文件名
+                const fileNameDisplay = document.getElementById('cycle-file-name-display');
+                fileNameDisplay.textContent = cycleFile.name + ' 已上传成功';
+                fileNameDisplay.style.display = 'block';
+                
                 showUploadSuccess();
             }
         }
@@ -489,6 +600,12 @@
             if (input.files[0]) {
                 detailFile = input.files[0];
                 document.getElementById('btn-filter-badcase').disabled = false;
+                
+                // 显示文件名
+                const fileNameDisplay = document.getElementById('detail-file-name-display');
+                fileNameDisplay.textContent = detailFile.name + ' 已上传成功';
+                fileNameDisplay.style.display = 'block';
+                
                 showUploadSuccess();
             }
         }
